@@ -66,8 +66,10 @@ which are passed the server and the command, as a string.")
                                   (format *trace-output* "~@<; ~@;Connection with ~A established.~:@>~%" peer-address)
                                   (handle-protocol server))
                              (close stream))
-               ;; XXX: SBCL-ism
-               (sb-int:simple-stream-error (c)
+               #+(or sbcl ccl)
+               (#+sbcl sb-int:simple-stream-error
+                #+ccl ccl:socket-error
+                 (c)
                  ;; Deal with -EPIPE
                  (format *error-output* "~@<; ~@;ERROR: ~A~:@>~%" c))))
         (socket-close server-socket)

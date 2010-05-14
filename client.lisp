@@ -57,6 +57,9 @@
                                      (lambda (result)
                                        (return-from get-result
                                          result))
+                                     (lambda (char)
+                                       (declare (ignore char))
+                                       (error "Incoming block write state activated on the client side."))
                                      (no-ack-mode-of client)))))))
 
 ;;; Benchmark low-level I/O

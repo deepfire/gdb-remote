@@ -191,6 +191,7 @@ killing."
 
 (defgeneric gdb-extended-command (server command arguments)
   (:method ((o gdb-server) command arguments)
+    (declare (ignore command arguments))
     ""))
 
 (define-gdb-command gdb-extended (command)

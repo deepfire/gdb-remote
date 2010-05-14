@@ -27,6 +27,7 @@
 (defgeneric gdb-monitor (server monitor-command rest-arg)
   (:documentation "Handle a monitor command from GDB.")
   (:method ((server gdb-server) monitor-command rest-arg)
+    (declare (ignore monitor-command rest-arg))
     ""))
 
 (defgeneric gdb-describe-target (target))
@@ -43,8 +44,11 @@
     (gdb-describe-target-spu server)))
 
 (defgeneric gdb-handle-query (server query arguments)
-  (:method ((o gdb-server) query args) "")
+  (:method ((o gdb-server) query args)
+    (declare (ignore query args))
+    "")
   (:method ((o gdb-server) (q (eql :supported)) args)
+    (declare (ignore args))
     "QStartNoAckMode+;PacketSize=4000"))
 
 (let (xferrable data)
@@ -80,7 +84,7 @@
               (response-values (or (multiple-value-list (gdb-monitor server (car command) (cdr command)))
                                    '("; No values"))))
          (to-hex-string (string-to-octets (apply #'concatenate 'string
-                                                 (loop :for (r . rest) :on response-values
+                                                 (loop :for (r . nil) :on response-values
                                                     :collect r
                                                     :collect #(#\Newline)))))))
       (("Xfer:(.*):(.*):(.*):(.*),(.*)" pxferrable pdirection annex poffset length)
