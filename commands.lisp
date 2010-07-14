@@ -105,7 +105,11 @@ killing."
 (define-gdb-command gdb-read-register (nr)
     "Read registers"
     (#\p "(.*)")
-  (to-hex-string (write-to-string (gdb-read-target-register server nr))))
+  (format nil (ecase (server-wordsize server)
+                (2 "~4,'0X")
+                (4 "~8,'0X")
+                (8 "~16,'0X"))
+          (gdb-read-target-register server (parse-integer nr :radix #x10))))
 
 (define-gdb-command gdb-write-register (nr value)
     "Write registers. Return value is ignored."

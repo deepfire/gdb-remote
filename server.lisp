@@ -31,6 +31,7 @@ which are passed the server and the command, as a string.")
 ;;;
 (defclass* gdb-server ()
   (stream
+   (wordsize :reader server-wordsize :initarg :wordsize)
    (register-set-bytes :initarg :register-set-bytes)
    (no-ack-mode :initform nil)))
 

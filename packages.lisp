@@ -25,6 +25,7 @@
            "REGISTER-SET-TO-VECTOR"
            "REGISTER-SET-FROM-VECTOR"
            ;; Server methods
+           "SERVER-WORDSIZE"
            "RUNNING?"
            "CHECK-INTERRUPT"
            "GDB-INTERRUPT"
