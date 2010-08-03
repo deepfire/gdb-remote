@@ -18,7 +18,8 @@
            "GDB-SERVER"
            "GDB-EXTENDED-SERVER"
            "STREAM-OF"
-           "ACCEPT-GDB-CONNECTION"
+           "ACCEPT-CLIENT-CONNECTION"
+           "SERVE-CLIENT-CONNECTION"
            ;; Targets
            "TARGET-X86"
            "MAKE-X86-REGISTER-SET"

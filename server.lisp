@@ -50,16 +50,19 @@ which are passed the server and the command, as a string.")
   (:method ((o gdb-server)) "")
   (:method ((o gdb-extended-server)) "OK"))
 
-(defgeneric accept-gdb-connection (server port &optional listen-address trace-exchange)
+(defgeneric accept-client-connection (server port &optional listen-address)
   (:documentation "Wait for a single connection to `server' on `port'")
-  (:method ((server gdb-server) port &optional (listen-address "127.0.0.1") (trace-exchange *trace-exchange*))
-    (let ((server-socket (socket-listen listen-address port :reuse-address t
-                                        :backlog 1))
-          (*trace-exchange* trace-exchange)
+  (:method ((server gdb-server) port &optional (listen-address "127.0.0.1"))
+    (let ((server-socket (socket-listen listen-address port :reuse-address t :backlog 1)))
+      (unwind-protect (socket-accept server-socket)
+        (socket-close server-socket)))))
+
+(defgeneric serve-client-connection (server connection &optional trace-exchange)
+  (:method ((server gdb-server) client &optional (trace-exchange *trace-exchange*))
+    (let ((*trace-exchange* trace-exchange)
           peer-address)
       (unwind-protect
-           (let* ((client (socket-accept server-socket))
-                  (stream (socket-stream client)))
+           (let ((stream (socket-stream client)))
              (setf peer-address (get-peer-address client))
              (handler-case (unwind-protect 
                                 (progn
@@ -69,12 +72,10 @@ which are passed the server and the command, as a string.")
                              (close stream))
                #+(or sbcl ccl)
                (#+sbcl sb-int:simple-stream-error
-                #+ccl ccl:socket-error
+                 #+ccl ccl:socket-error
                  (c)
                  ;; Deal with -EPIPE
-                 (format *error-output* "~@<; ~@;ERROR: ~A~:@>~%" c))))
-        (socket-close server-socket)
-        (format *trace-output* "~@<; ~@;Severed connection with ~A.~:@>~%" peer-address)))))
+                 (format *error-output* "~@<; ~@;ERROR: ~A~:@>~%" c))))))))
 
 (defun empty-adjustable-vector ()
   (make-array 0 

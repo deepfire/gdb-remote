@@ -16,7 +16,9 @@
   ((running? :accessor running? :initform t)))
 
 (defun test-sample-server (&optional (port 9000))
-  (accept-gdb-connection (make-instance 'sample-server) port))
+  (let* ((server (make-instance 'sample-server))
+         (client (accept-client-connection server port)))
+    (serve-client-connection server client)))
 
 
 (defmethod gdb-interrupt ((server sample-server))
