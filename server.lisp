@@ -67,7 +67,7 @@ which are passed the server and the command, as a string.")
              (handler-case (unwind-protect 
                                 (progn
                                   (setf (stream-of server) stream)
-                                  (format *trace-output* "~@<; ~@;Connection with ~A established.~:@>~%" peer-address)
+                                  (format *log-stream* "~@<; ~@;Connection with ~A established.~:@>~%" peer-address)
                                   (handle-protocol server))
                              (close stream))
                #+(or sbcl ccl)
@@ -130,7 +130,7 @@ and not running a regex matcher on it either."))
        (cond
          ((char/= char #\$)
           ;; Why do we receive another +?
-          ;(format *trace-output* "~&Junk character ~C. Ignoring.~%" char)
+          ;(format *log-stream* "~&Junk character ~C. Ignoring.~%" char)
           (done :start))
          (t
           (done :in-msg1
@@ -177,14 +177,14 @@ and not running a regex matcher on it either."))
                 (write-char #\+ stream)
                 (force-output stream)
                 (when verbose
-                  #+ ignore (format *trace-output* "~&<< ~A~%" command))
+                  #+ ignore (format *log-stream* "~&<< ~A~%" command))
                 ;; We received a complete request with valid
                 (funcall packet-fn command))
                (t
                 (write-char #\- stream)
                 (force-output stream)
                 (when verbose
-                  (format *trace-output* "~&Received bad command: ~S" command))))
+                  (format *log-stream* "~&Received bad command: ~S" command))))
              (done :start)))))))
 
 (defgeneric handle-protocol (server)
@@ -248,10 +248,10 @@ and not running a regex matcher on it either."))
                          "")))
            (checksum (update-checksum result)))
       (when *trace-exchange*
-        (format *trace-output* "<reply ~A~:[~;...continued~]~%"
+        (format *log-stream* "<reply ~A~:[~;...continued~]~%"
                 (subseq result 0 (min *trace-exchange* (length result)))
                 (> (length result) *trace-exchange*))
-        (force-output *trace-output*))
+        (force-output *log-stream*))
       (loop
          (write-response (stream-of server) result checksum)
          (when (or (no-ack-mode-of server)

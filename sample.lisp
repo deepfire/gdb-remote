@@ -22,7 +22,7 @@
 
 
 (defmethod gdb-interrupt ((server sample-server))
-  (format *trace-output* "Interrupt!~%")
+  (format *log-stream* "Interrupt!~%")
   (setf (running? server) nil))
 
 
