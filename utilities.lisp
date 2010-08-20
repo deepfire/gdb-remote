@@ -45,13 +45,13 @@ integers."
   #-(or sbcl ccl) (declare (ignore octets))
   #-(or sbcl ccl) (error "Not implemented.")
   #+sbcl (sb-ext:octets-to-string octets :external-format :ascii)
-  #+ccl (ccl:decode-string-from-octets octets :external-format :us-ascii))
+  #+ccl (ccl::decode-string-from-octets octets :external-format :us-ascii))
 
 (defun string-to-octets (string)
   #-(or sbcl ccl) (declare (ignore octets))
   #-(or sbcl ccl) (error "Not implemented.")
   #+sbcl (sb-ext:string-to-octets string :external-format :ascii)
-  #+ccl (ccl:encode-string-to-octets string :external-format :us-ascii))
+  #+ccl (ccl::encode-string-to-octets string :external-format :us-ascii))
 
 (defun parse-hex-integer (str)
   ;; XXX Catch parse-error and throw gdb-protocol-error?
